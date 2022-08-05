@@ -175,7 +175,7 @@ public abstract class ExplorerView extends ExplorerViewBase implements Initializ
     
     protected void onSelectItem(Observable observable, TreeItem<Node> oldValue, TreeItem<Node> newValue) {
         Node node = newValue == null ? null : newValue.getValue();
-        if (node != null) {
+        if (node != null && node.id >= 0) {
             if (node.leaf) {
                 Leaf leaf = (Leaf) node;
                 executor.displayLeaf(args, leaf);
@@ -211,6 +211,8 @@ public abstract class ExplorerView extends ExplorerViewBase implements Initializ
             }
             
             if (filterRoot != null) {
+                filterRoot.getChildren().clear();
+                
                 dummyRoot.getChildren().add(filterRoot);
             }
         });
