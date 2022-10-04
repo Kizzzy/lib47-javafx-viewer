@@ -2,6 +2,7 @@ package cn.kizzzy.javafx.viewer;
 
 import cn.kizzzy.vfs.IPackage;
 import cn.kizzzy.vfs.tree.Node;
+import javafx.scene.control.TreeItem;
 
 public class ViewerExecutorBinder {
     
@@ -9,9 +10,16 @@ public class ViewerExecutorBinder {
     
     private final ViewerExecutor executor;
     
+    private final TreeItem<Node> parent;
+    
     public ViewerExecutorBinder(IPackage vfs, ViewerExecutor executor) {
+        this(vfs, executor, null);
+    }
+    
+    public ViewerExecutorBinder(IPackage vfs, ViewerExecutor executor, TreeItem<Node> parent) {
         this.vfs = vfs;
         this.executor = executor;
+        this.parent = parent;
     }
     
     public boolean contains(Node node) {
@@ -24,5 +32,9 @@ public class ViewerExecutorBinder {
     
     public ViewerExecutor getExecutor() {
         return executor;
+    }
+    
+    public TreeItem<Node> getParent() {
+        return parent;
     }
 }

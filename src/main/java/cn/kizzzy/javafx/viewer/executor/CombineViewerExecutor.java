@@ -9,6 +9,7 @@ import cn.kizzzy.observe.value.ValueObserveArgs;
 import cn.kizzzy.vfs.IPackage;
 import cn.kizzzy.vfs.tree.Leaf;
 import cn.kizzzy.vfs.tree.Node;
+import javafx.scene.control.TreeItem;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,21 +66,21 @@ public class CombineViewerExecutor implements ViewerExecutor {
     }
     
     @Override
-    public Iterable<MenuItemArg> showContext(ViewerExecutorArgs args, Node selected) {
+    public Iterable<MenuItemArg> showContext(ViewerExecutorArgs args, TreeItem<Node> item, Node node) {
         List<MenuItemArg> list = new ArrayList<>();
         
         ViewerExecutorBinder _binder = null;
-        if (selected != null) {
+        if (item != null) {
             for (ViewerExecutorBinder binder : binders) {
-                if (binder.contains(selected)) {
+                if (binder.contains(item.getValue())) {
                     _binder = binder;
                 }
             }
         }
         
         for (ViewerExecutor executor : executors) {
-            Node _target = _binder == null || _binder.getExecutor() != executor ? null : selected;
-            for (MenuItemArg arg : executor.showContext(args, _target)) {
+            TreeItem<Node> _target = _binder == null || _binder.getExecutor() != executor ? null : item;
+            for (MenuItemArg arg : executor.showContext(args, _target, _target == null ? null : _target.getValue())) {
                 list.add(arg);
             }
         }

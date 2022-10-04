@@ -31,7 +31,9 @@ import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
@@ -68,6 +70,9 @@ public abstract class ExplorerView extends ExplorerViewBase implements Initializ
     
     protected TreeItem<Node> dummyRoot;
     protected TreeItem<Node> filterRoot;
+    
+    protected Map<Integer, IPackage> childVfsKvs
+        = new HashMap<>();
     
     protected final ViewerExecutorArgs args = new ViewerExecutorArgs() {
         
@@ -126,8 +131,7 @@ public abstract class ExplorerView extends ExplorerViewBase implements Initializ
         
         JavafxHelper.initContextMenu(tree_view, () -> {
             TreeItem<Node> selected = tree_view.getSelectionModel().getSelectedItem();
-            Node node = selected == null ? null : selected.getValue();
-            return executor.showContext(args, node);
+            return executor.showContext(args, selected, selected == null ? null : selected.getValue());
         });
     }
     
@@ -177,43 +181,66 @@ public abstract class ExplorerView extends ExplorerViewBase implements Initializ
         Node node = newValue == null ? null : newValue.getValue();
         if (node != null && node.id >= 0) {
             if (node.leaf) {
-                Leaf leaf = (Leaf) node;
-                executor.displayLeaf(args, leaf);
-            } else {
-                newValue.getChildren().clear();
-                
-                Iterable<Node> nodes = vfs.listNode(node.id, false);
-                for (Node temp : nodes) {
-                    TreeItem<Node> child = new TreeItem<>(temp);
-                    newValue.getChildren().add(child);
+                IPackage childVfs = childVfsKvs.get(node.id);
+                if (childVfs == null) {
+                    Leaf leaf = (Leaf) node;
+                    executor.displayLeaf(args, leaf);
+                } else {
+                    for (Node root : childVfs.listNode(0)) {
+                        buildNodeImpl(newValue, childVfs, root.id);
+                    }
                 }
-                newValue.getChildren().sort(comparator);
+            } else {
+                buildNodeImpl(newValue, vfs, node.id);
             }
         }
+    }
+    
+    private void buildNodeImpl(TreeItem<Node> treeItem, IPackage vfs, int nodeId) {
+        treeItem.getChildren().clear();
+        
+        Iterable<Node> nodes = vfs.listNode(nodeId, false);
+        for (Node temp : nodes) {
+            TreeItem<Node> child = new TreeItem<>(temp);
+            treeItem.getChildren().add(child);
+        }
+        treeItem.getChildren().sort(comparator);
     }
     
     private void onPackageChanged(ValueObserveArgs<ViewerExecutorBinder> args) {
         IPackage _vfs = args.getNewValue().getVfs();
+        TreeItem<Node> parent = args.getNewValue().getParent();
         if (_vfs != null) {
-            doAfterLoadVfs(_vfs);
+            vfs.addPackage(_vfs);
+            
+            if (parent != null && parent != dummyRoot) {
+                childVfsKvs.put(parent.getValue().id, _vfs);
+            }
+            
+            doAfterLoadVfs(parent == null ? vfs : _vfs, parent == null ? dummyRoot : parent);
         }
     }
     
-    private void doAfterLoadVfs(IPackage _vfs) {
-        vfs.addPackage(_vfs);
-        
+    private void doAfterLoadVfs(IPackage vfs, TreeItem<Node> parent) {
         Platform.runLater(() -> {
-            dummyRoot.getChildren().clear();
+            parent.getChildren().clear();
             
-            final List<Node> nodes = vfs.listNode(0);
-            for (Node node : nodes) {
-                dummyRoot.getChildren().add(new TreeItem<>(node));
-            }
-            
-            if (filterRoot != null) {
-                filterRoot.getChildren().clear();
+            if (parent == dummyRoot) {
+                for (Node root : vfs.listNode(0)) {
+                    parent.getChildren().add(new TreeItem<>(root));
+                }
                 
-                dummyRoot.getChildren().add(filterRoot);
+                if (filterRoot != null) {
+                    filterRoot.getChildren().clear();
+                    
+                    parent.getChildren().add(filterRoot);
+                }
+            } else {
+                for (Node root : vfs.listNode(0)) {
+                    for (Node child : root.children.values()) {
+                        parent.getChildren().add(new TreeItem<>(child));
+                    }
+                }
             }
         });
     }

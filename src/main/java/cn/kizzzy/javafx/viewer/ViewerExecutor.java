@@ -5,6 +5,7 @@ import cn.kizzzy.javafx.display.DisplayTabView;
 import cn.kizzzy.vfs.IPackage;
 import cn.kizzzy.vfs.tree.Leaf;
 import cn.kizzzy.vfs.tree.Node;
+import javafx.scene.control.TreeItem;
 
 public interface ViewerExecutor {
     
@@ -16,5 +17,5 @@ public interface ViewerExecutor {
     
     void displayLeaf(ViewerExecutorArgs args, Leaf leaf);
     
-    Iterable<MenuItemArg> showContext(ViewerExecutorArgs args, Node selected);
+    Iterable<MenuItemArg> showContext(ViewerExecutorArgs args, TreeItem<Node> item, Node selected);
 }
