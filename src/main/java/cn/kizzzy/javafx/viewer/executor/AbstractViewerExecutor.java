@@ -21,6 +21,11 @@ public abstract class AbstractViewerExecutor implements ViewerExecutor {
     protected DisplayOperator<IPackage> displayer;
     
     @Override
+    public void stop(ViewerExecutorArgs args) {
+        displayer.stop();
+    }
+    
+    @Override
     public void displayLeaf(ViewerExecutorArgs args, Leaf leaf) {
         displayer.display(leaf.path);
     }
