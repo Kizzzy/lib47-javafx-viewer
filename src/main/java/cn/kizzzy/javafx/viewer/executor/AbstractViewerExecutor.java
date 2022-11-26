@@ -7,7 +7,6 @@ import cn.kizzzy.javafx.display.DisplayOperator;
 import cn.kizzzy.javafx.setting.SettingDialog;
 import cn.kizzzy.javafx.viewer.ViewerExecutor;
 import cn.kizzzy.javafx.viewer.ViewerExecutorArgs;
-import cn.kizzzy.vfs.IPackage;
 import cn.kizzzy.vfs.tree.Leaf;
 import cn.kizzzy.vfs.tree.Node;
 import javafx.stage.Stage;
@@ -18,7 +17,7 @@ import java.io.File;
 
 public abstract class AbstractViewerExecutor implements ViewerExecutor {
     
-    protected DisplayOperator<IPackage> displayer;
+    protected DisplayOperator displayer;
     
     @Override
     public void stop(ViewerExecutorArgs args) {
@@ -27,7 +26,7 @@ public abstract class AbstractViewerExecutor implements ViewerExecutor {
     
     @Override
     public void displayLeaf(ViewerExecutorArgs args, Leaf leaf) {
-        displayer.display(leaf.path);
+        displayer.display(args.getVfs(), leaf);
     }
     
     protected void openSetting(ViewerExecutorArgs args, Object config) {
