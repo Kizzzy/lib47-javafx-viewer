@@ -1,16 +1,17 @@
 package cn.kizzzy.toolkit.controller;
 
 import cn.kizzzy.helper.StringHelper;
+import cn.kizzzy.javafx.JavafxControlParameter;
 import cn.kizzzy.javafx.StageHelper;
 import cn.kizzzy.javafx.common.JavafxHelper;
 import cn.kizzzy.javafx.display.DisplayTabView;
+import cn.kizzzy.javafx.plugin.PluginView;
 import cn.kizzzy.javafx.setting.SettingDialog;
 import cn.kizzzy.javafx.viewer.ViewerExecutor;
 import cn.kizzzy.javafx.viewer.ViewerExecutorArgs;
 import cn.kizzzy.javafx.viewer.ViewerExecutorBinder;
 import cn.kizzzy.observe.value.ValueObservable;
 import cn.kizzzy.observe.value.ValueObserveArgs;
-import cn.kizzzy.toolkit.view.AbstractView;
 import cn.kizzzy.vfs.IPackage;
 import cn.kizzzy.vfs.pack.CombinePackage;
 import cn.kizzzy.vfs.pack.FilePackage;
@@ -37,7 +38,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
-abstract class ExplorerViewBase extends AbstractView {
+abstract class ExplorerViewBase extends PluginView {
     
     @FXML
     protected TextField filterValue;
@@ -52,6 +53,7 @@ abstract class ExplorerViewBase extends AbstractView {
     protected Label tips;
 }
 
+@JavafxControlParameter(fxml = "/fxml/viewer/explorer_view.fxml")
 public abstract class ExplorerView extends ExplorerViewBase implements Initializable {
     
     protected static final Comparator<TreeItem<Node>> comparator
@@ -71,44 +73,46 @@ public abstract class ExplorerView extends ExplorerViewBase implements Initializ
     protected TreeItem<Node> dummyRoot;
     protected TreeItem<Node> filterRoot;
     
-    protected Map<Integer, IPackage> childVfsKvs
-        = new HashMap<>();
+    protected Map<Integer, IPackage> childVfsKvs;
     
-    protected final ViewerExecutorArgs args = new ViewerExecutorArgs() {
-        
-        @Override
-        public Stage getStage() {
-            return stage;
-        }
-        
-        @Override
-        public IPackage getUserVfs() {
-            return userVfs;
-        }
-        
-        @Override
-        public StageHelper getStageHelper() {
-            return stageHelper;
-        }
-        
-        @Override
-        public IPackage getVfs() {
-            return vfs;
-        }
-        
-        @Override
-        public IdGenerator getIdGenerator() {
-            return idGenerator;
-        }
-        
-        @Override
-        public ValueObservable<ViewerExecutorBinder> getObservable() {
-            return observable;
-        }
-    };
+    protected ViewerExecutorArgs args;
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        childVfsKvs = new HashMap<>();
+        args = new ViewerExecutorArgs() {
+            
+            @Override
+            public Stage getStage() {
+                return stage;
+            }
+            
+            @Override
+            public IPackage getUserVfs() {
+                return userVfs;
+            }
+            
+            @Override
+            public StageHelper getStageHelper() {
+                return stageHelper;
+            }
+            
+            @Override
+            public IPackage getVfs() {
+                return vfs;
+            }
+            
+            @Override
+            public IdGenerator getIdGenerator() {
+                return idGenerator;
+            }
+            
+            @Override
+            public ValueObservable<ViewerExecutorBinder> getObservable() {
+                return observable;
+            }
+        };
+        
         userVfs = new FilePackage(System.getProperty("user.home") + "/.user");
         
         stageHelper = new StageHelper();

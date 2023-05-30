@@ -9,8 +9,8 @@
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.*?>
 <?import java.net.URL?>
-<AnchorPane minHeight="600.0" minWidth="800.0" xmlns="http://javafx.com/javafx/17.0.2-ea"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="cn.kizzzy.toolkit.controller.ExplorerView">
+<fx:root type="AnchorPane" minHeight="600.0" minWidth="800.0" xmlns="http://javafx.com/javafx/17.0.2-ea"
+         xmlns:fx="http://javafx.com/fxml/1" fx:controller="cn.kizzzy.toolkit.controller.ExplorerView">
     <children>
         <VBox spacing="8.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0"
               AnchorPane.topAnchor="8.0">
@@ -61,4 +61,4 @@
     <stylesheets>
         <URL value="@/css/global.css"/>
     </stylesheets>
-</AnchorPane>
+</fx:root>
