@@ -1,6 +1,5 @@
 package cn.kizzzy.javafx.viewer.executor;
 
-import cn.kizzzy.helper.LogHelper;
 import cn.kizzzy.helper.StringHelper;
 import cn.kizzzy.javafx.StageHelper;
 import cn.kizzzy.javafx.display.DisplayOperator;
@@ -10,12 +9,16 @@ import cn.kizzzy.javafx.viewer.ViewerExecutorArgs;
 import cn.kizzzy.vfs.tree.Leaf;
 import cn.kizzzy.vfs.tree.Node;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
 
 public abstract class AbstractViewerExecutor implements ViewerExecutor {
+    
+    protected static final Logger logger = LoggerFactory.getLogger(AbstractViewerExecutor.class);
     
     protected DisplayOperator displayer;
     
@@ -46,7 +49,7 @@ public abstract class AbstractViewerExecutor implements ViewerExecutor {
                     Desktop.getDesktop().open(new File(path));
                 }
             } catch (Exception e) {
-                LogHelper.error("open folder error: " + path, e);
+                logger.error("open folder error: " + path, e);
             }
         }).start();
     }
